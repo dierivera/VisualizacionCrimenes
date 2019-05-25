@@ -1,4 +1,6 @@
 library(ggplot2)
+library(maps)
+library(mapdata)
 
 #variable que setea el top
 filtro <- 20
@@ -7,23 +9,20 @@ filtro <- 20
 products <- read.csv(file="C:/Users/Diego/Downloads/BFPD_csv_07132018/Products.csv", header=TRUE, sep=",")
 nutrients <- read.csv(file="C:/Users/Diego/Downloads/BFPD_csv_07132018/Nutrients.csv", header=TRUE, sep=",")
 
-#239089 observaciones (filas) de  8 variables (columnas)
-#str(products)
-#str(nutrients)
+#ejemplo de un plot nativo
+plot(products$manufacturer)
+
 
 #para unir ambos csv
 merged_data <- merge(products, nutrients, by = "NDB_Number")
 
-
-#ejemplo de un plot nativo
-plot(products$manufacturer)
 
 
 #Crea una tabla con todas las entradas de proteinas
 protein_obs <- merged_data$Nutrient_name == "Protein"
 proteins <- merged_data[protein_obs, ]
 #ordena las proteinas descendentemente
-sorted_proteins <- proteins[order(-proteins$Output_value),]
+sorted_proteins2 <- proteins[order(-proteins$Output_value),]
 #crea un top20
 top20_proteins <- sorted_proteins[1:filtro,]
 
@@ -37,6 +36,7 @@ energies <- merged_protein_data[energy_obs, ]
 sorted_energies <- energies[order(-energies$Output_value.y),]
 sorted_energies <- sorted_energies[1:filtro,]
 
+##################################################################################################################################
 
 #plot nativo que no funciona
 #plot(top20_proteins$long_name, top20_proteins$Output_value)
@@ -46,8 +46,7 @@ ggplot(data=top20_proteins, aes(x = top20_proteins$Output_value,
                             y = top20_proteins$long_name)) + geom_point(size=3) + scale_y_discrete(limits=top20_proteins$long_name)
 
 
-
-
+##################################################################################################################################
 #Variables creadas para crear el grafico final
 Type = sorted_energies$long_name
 Value1 = c(sorted_energies$Output_value.x)
@@ -59,5 +58,14 @@ Groups<-c(rep("Protein",filtro),rep("Energy",filtro))
 df<-data.frame(FOOD_NAME,QUANTITY,Groups)
 
 #grafico final
-ggplot(df, aes(x=FOOD_NAME,y=QUANTITY, fill=Groups)) + geom_bar(stat='identity') + theme(axis.text.x = element_text(angle = 90))
+ggplot(df, aes(x=FOOD_NAME,y=QUANTITY, fill=Groups)) + geom_bar(stat='identity', position = "fill")  + coord_flip() + theme_classic() + 
+  labs(x = "Type of Food", y = "Quantity", title = "Top 20 Types of Food with Protein (+ Energy)") + scale_fill_brewer(palette = "Blues")
+
+#+ theme(axis.text.x = element_text(angle = 90)) #crea el texto del eje X vertical
                
+##################################################################################################################################
+
+#cargar un mapa
+usa_map <- map_data("usa") # we already did this, but we can do it again
+ggplot() + geom_polygon(data = usa_map, aes(x=long, y = lat, group = group)) + 
+  coord_fixed(1.3)
