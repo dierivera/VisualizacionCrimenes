@@ -2,13 +2,12 @@
 <meta charset="utf-8">
 <html>
   <head>
-<title>Visualizacion - Parallel Coordinates</title>
+<title>Crimenes contra las mujeres</title>
   </head>
 <!-- http://syntagmatic.github.com/parallel-coordinates/ -->
 
 <body>
 <link rel="stylesheet" type="text/css" href="css/style.css">
-
 <script src="js/d3.v3.min.js"></script>
 <script src="js/d3.parcoords.js"></script>
 <script src="js/divgrid.js"></script>
@@ -25,11 +24,27 @@
   <h2 style="color:#eae7e4; text-align: center;">Crimenes contra las mujeres</h2>
 </nav>
 
-<h4 style="margin-left: 20px;" >Top 5 Crimenes contra las mujeres, 2017</h4>
-<div style="width: 420px; height: 580px" id="pie_chart" > </div>
+<div id="pie_container" style=" height: 550px;">
+  <div  style="margin-left: 20px; float: left;">
+    <h3 align="center">Top 5 Crimenes contra las mujeres, 2017</h3>
+    <div id="pie_chart" > </div>
+  </div>
+  <div id="right_side" style="float: right;">
+      <div style="margin-right: 200px;" class="panel panel-danger">
+        <div  class="panel-heading">Violencia contra la mujer</div >
+        <div  class="panel-body">La violencia contra la mujer -especialmente la ejercida por</br>su pareja y la violencia sexual- constituye un grave</br>problema de salud pública y una violación de los derechos</br>humanos de las mujeres.</div >
+      </div>
 
-<div id="example" class="parcoords"></div>
-<div id="grid"></div>
+  </div>
+</div>
+
+
+<h3 style="width: 420px; margin-left: 20px;">Historial de Crímenes</h3>
+
+<div id="visualizacion_plot" class="parcoords"></div>
+<div id=parallelplotbody>
+  <div style="margin-left: 20px;" id="grid"></div>
+</div>
 
 
 <script id="brushing">// quantitative colour scale
@@ -38,7 +53,7 @@
   	.range(["#c46767", "#3f1616"]);
 
 
-var graph = d3.parcoords()("#example")
+var graph = d3.parcoords()("#visualizacion_plot")
   .color(color_set);
 
 // load csv file and create the chart
