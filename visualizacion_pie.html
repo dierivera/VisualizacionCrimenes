@@ -60,7 +60,7 @@
     <div style="margin-left: 20px; float: left;">
     <div id="pie_container" style=" height: 500px;">
       <div id="chart" style="float: left;"></div>
-      <div id="legend" style="float: right; margin-top:180px; margin-left:40px;"></div>
+      <div id="legend" style="float: right; margin-top:160px; margin-left:40px;"  class="panel panel-danger"></div>
     </div>
     <script src="js/d3.v3.min.js"></script>
 
@@ -104,7 +104,10 @@
 
         var tooltip = d3.select('#legend')
           .append('div')
-          .attr('data-original-class', 'tooltip');
+          .attr('data-original-class', 'tooltip')
+          .attr('class', 'panel-body');
+
+        tooltip.style('display', 'none');
 
         tooltip.append('div')
           .attr('class', 'label2');
@@ -242,7 +245,10 @@
 
     var tooltip = d3.select('#legend')
       .append('div')
-      .attr('data-original-class', 'tooltip');
+      .attr('data-original-class', 'tooltip')
+      .attr('class', 'panel-body');
+
+    tooltip.style('display', 'none');
 
     tooltip.append('div')
       .attr('class', 'label2');
