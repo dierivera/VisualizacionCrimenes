@@ -24,7 +24,7 @@
   <h2 style="color:#eae7e4; text-align: center;">Violencia contra la mujer en Costa Rica</h2>
 </nav>
 
-<div id="pie_container" style=" height: 580px;">
+<div id="pie_container">
   <div  style="margin-left: 20px; float: left;">
     <div id="pie_chart" > </div>
   </div>
@@ -154,7 +154,6 @@ function getCentroids(data){
 }
 
 function getActiveData(){
-	// I'm pretty sure this data is already somewhere in graph
 	if (graph.brushed()!=false) return graph.brushed();
 	return graph.data();
 }
@@ -204,7 +203,6 @@ function addTooltip(clicked, clickedCenPts){
     var margins = graph.margin()
 
     // get all the values into a single list
-    // I'm pretty sure there is a better way to write this is Javascript
     for (var i=0; i<clicked.length; i++){
     	for (var j=0; j<clickedCenPts[i].length; j++){
     		var text = d3.values(clicked[i])[j];
