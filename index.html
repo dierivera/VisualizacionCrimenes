@@ -59,12 +59,15 @@ var graph = d3.parcoords()("#visualizacion_plot")
 d3.csv('data/crimes_generated.csv', function(crimenes) {
 
 
+
+
   graph
     .data(crimenes)
     .margin({ top: 30, left: 345, bottom: 40, right: 0 })
 		.alpha(0.6)
     .rate(5)
     .render()
+    .hideAxis(["col0-col3"])
     .brushMode("1D-axes")  // enable brushing
     .interactive();
 
@@ -79,7 +82,7 @@ d3.csv('data/crimes_generated.csv', function(crimenes) {
       "mouseout": graph.unhighlight
     });
 
-    // set the initial coloring based on the 3rd column
+    // set the initial coloring based on the last column
 update_colors(d3.keys(crimenes[0])[8]);
 
  // click label to activate coloring
@@ -132,10 +135,6 @@ function update_colors(dimension) {
 
 // Add highlight for every line on click
 function getCentroids(data){
-	// this function returns centroid points for data. I had to change the source
-	// for parallelcoordinates and make compute_centroids public.
-	// I assume this should be already somewhere in graph and I don't need to recalculate it
-	// but I couldn't find it so I just wrote this for now
 	var margins = graph.margin();
 	var graphCentPts = [];
 

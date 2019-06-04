@@ -7,7 +7,7 @@
     <style>
       #chart {
         height: 420px;
-        margin: 0 auto;                                               /* NEW */
+        margin: 0 auto;
         position: relative;
         width: 420px;
       }
@@ -29,34 +29,39 @@
         font-size: 12px;
       }
       rect {
-        cursor: pointer;                                              /* NEW */
+        cursor: pointer;
         stroke-width: 2;
       }
-      rect.disabled {                                                 /* NEW */
-        fill: transparent !important;                                 /* NEW */
-      }                                                               /* NEW */
-      h1 {                                                            /* NEW */
-        font-size: 14px;                                              /* NEW */
-        text-align: center;                                           /* NEW */
-      }                                                               /* NEW */
+      rect.disabled {
+        fill: transparent !important;
+      }
+      h1 {
+        font-size: 14px;
+        text-align: center;
+      }
     </style>
   </head>
   <body>
-    <div  style="margin-left: 20px; float: left;">
-      <h3 align="center">Top 5 crimenes contra las mujeres</h3>
-      <div class="form-group">
-          <select class="form-control">
-             <option value="data/generated_crimenes_2017.csv">2017</option>
-             <option value="data/generated_crimenes_2016.csv">2016</option>
-             <option value="data/generated_crimenes_2015.csv">2015</option>
-             <option value="data/generated_crimenes_2014.csv">2014</option>
-             <option value="data/generated_crimenes_2013.csv">2013</option>
-             <option value="data/generated_crimenes_2012.csv">2012</option>
-             <option value="data/generated_crimenes_2011.csv">2011</option>
-             <option value="data/generated_crimenes_2010.csv">2010</option>
-          </select>
-       </div>
-    <div id="chart"></div>
+      <div  style=" max-width: 420px; margin-left : 20px;">
+          <h3 align="center">Top 5 crimenes contra las mujeres</h3>
+          <div class="form-group">
+              <select class="form-control">
+                 <option value="data/generated_crimenes_2017.csv">2017</option>
+                 <option value="data/generated_crimenes_2016.csv">2016</option>
+                 <option value="data/generated_crimenes_2015.csv">2015</option>
+                 <option value="data/generated_crimenes_2014.csv">2014</option>
+                 <option value="data/generated_crimenes_2013.csv">2013</option>
+                 <option value="data/generated_crimenes_2012.csv">2012</option>
+                 <option value="data/generated_crimenes_2011.csv">2011</option>
+                 <option value="data/generated_crimenes_2010.csv">2010</option>
+              </select>
+           </div>
+     </div>
+    <div style="margin-left: 20px; float: left;">
+    <div id="pie_container" style=" height: 580px;">
+      <div id="chart" style="float: left;"></div>
+      <div id="legend" style="float: right;"></div>
+    </div>
     <script src="js/d3.v3.min.js"></script>
 
     <!-- Heres the code to update the pie chart -->
@@ -113,7 +118,7 @@
         d3.csv(path, function (error, dataset) {
           dataset.forEach(function(d) {
             d.count = +d.count;
-            d.enabled = true;                                         // NEW
+            d.enabled = true;
           });
 
           var path = svg.selectAll('path')
@@ -123,12 +128,12 @@
             .attr('d', arc)
             .attr('fill', function(d, i) {
               return color(d.data.label);
-            })                                                        // UPDATED (removed semicolon)
-            .each(function(d) { this._current = d; });                // NEW
+            })
+            .each(function(d) { this._current = d; });
 
           path.on('mouseover', function(d) {
             var total = d3.sum(dataset.map(function(d) {
-              return (d.enabled) ? d.count : 0;                       // UPDATED
+              return (d.enabled) ? d.count : 0;
             }));
             var percent = Math.round(1000 * d.data.count / total) / 10;
             tooltip.select('.label2').html(d.data.label);
@@ -141,12 +146,6 @@
             tooltip.style('display', 'none');
           });
 
-          /* OPTIONAL
-          path.on('mousemove', function(d) {
-            tooltip.style('top', (d3.event.layerY + 10) + 'px')
-              .style('left', (d3.event.layerX + 10) + 'px');
-          });
-          */
 
           var legend = svg.selectAll('.legend')
             .data(color.domain())
@@ -165,39 +164,39 @@
             .attr('width', legendRectSize)
             .attr('height', legendRectSize)
             .style('fill', color)
-            .style('stroke', color)                                   // UPDATED (removed semicolon)
-            .on('click', function(label) {                            // NEW
-              var rect = d3.select(this);                             // NEW
-              var enabled = true;                                     // NEW
-              var totalEnabled = d3.sum(dataset.map(function(d) {     // NEW
-                return (d.enabled) ? 1 : 0;                           // NEW
-              }));                                                    // NEW
+            .style('stroke', color)
+            .on('click', function(label) {
+              var rect = d3.select(this);
+              var enabled = true;
+              var totalEnabled = d3.sum(dataset.map(function(d) {
+                return (d.enabled) ? 1 : 0;
+              }));
 
-              if (rect.attr('class') === 'disabled') {                // NEW
-                rect.attr('class', '');                               // NEW
-              } else {                                                // NEW
-                if (totalEnabled < 2) return;                         // NEW
-                rect.attr('class', 'disabled');                       // NEW
-                enabled = false;                                      // NEW
-              }                                                       // NEW
+              if (rect.attr('class') === 'disabled') {
+                rect.attr('class', '');
+              } else {
+                if (totalEnabled < 2) return;
+                rect.attr('class', 'disabled');
+                enabled = false;
+              }
 
-              pie.value(function(d) {                                 // NEW
-                if (d.label === label) d.enabled = enabled;           // NEW
-                return (d.enabled) ? d.count : 0;                     // NEW
-              });                                                     // NEW
+              pie.value(function(d) {
+                if (d.label === label) d.enabled = enabled;
+                return (d.enabled) ? d.count : 0;
+              });
 
-              path = path.data(pie(dataset));                         // NEW
+              path = path.data(pie(dataset));
 
-              path.transition()                                       // NEW
-                .duration(750)                                        // NEW
-                .attrTween('d', function(d) {                         // NEW
-                  var interpolate = d3.interpolate(this._current, d); // NEW
-                  this._current = interpolate(0);                     // NEW
-                  return function(t) {                                // NEW
-                    return arc(interpolate(t));                       // NEW
-                  };                                                  // NEW
-                });                                                   // NEW
-            });                                                       // NEW
+              path.transition()
+                .duration(750)
+                .attrTween('d', function(d) {
+                  var interpolate = d3.interpolate(this._current, d);
+                  this._current = interpolate(0);
+                  return function(t) {
+                    return arc(interpolate(t));
+                  };
+                });
+            });
 
           legend.append('text')
             .attr('x', legendRectSize + legendSpacing)
@@ -241,7 +240,7 @@
       .value(function(d) { return d.count; })
       .sort(null);
 
-    var tooltip = d3.select('#chart')
+    var tooltip = d3.select('#legend')
       .append('div')
       .attr('data-original-class', 'tooltip');
 
@@ -257,7 +256,7 @@
     d3.csv('data/generated_crimenes_2017.csv', function (error, dataset) {
       dataset.forEach(function(d) {
         d.count = +d.count;
-        d.enabled = true;                                         // NEW
+        d.enabled = true;
       });
 
       var path = svg.selectAll('path')
@@ -268,7 +267,7 @@
         .attr('fill', function(d, i) {
           return color(d.data.label);
         })                                                        // UPDATED (removed semicolon)
-        .each(function(d) { this._current = d; });                // NEW
+        .each(function(d) { this._current = d; });
 
       path.on('mouseover', function(d) {
         var total = d3.sum(dataset.map(function(d) {
@@ -310,38 +309,38 @@
         .attr('height', legendRectSize)
         .style('fill', color)
         .style('stroke', color)                                   // UPDATED (removed semicolon)
-        .on('click', function(label) {                            // NEW
-          var rect = d3.select(this);                             // NEW
-          var enabled = true;                                     // NEW
-          var totalEnabled = d3.sum(dataset.map(function(d) {     // NEW
-            return (d.enabled) ? 1 : 0;                           // NEW
-          }));                                                    // NEW
+        .on('click', function(label) {
+          var rect = d3.select(this);
+          var enabled = true;
+          var totalEnabled = d3.sum(dataset.map(function(d) {
+            return (d.enabled) ? 1 : 0;
+          }));
 
-          if (rect.attr('class') === 'disabled') {                // NEW
-            rect.attr('class', '');                               // NEW
-          } else {                                                // NEW
-            if (totalEnabled < 2) return;                         // NEW
-            rect.attr('class', 'disabled');                       // NEW
-            enabled = false;                                      // NEW
-          }                                                       // NEW
+          if (rect.attr('class') === 'disabled') {
+            rect.attr('class', '');
+          } else {
+            if (totalEnabled < 2) return;
+            rect.attr('class', 'disabled');
+            enabled = false;
+          }
 
-          pie.value(function(d) {                                 // NEW
-            if (d.label === label) d.enabled = enabled;           // NEW
-            return (d.enabled) ? d.count : 0;                     // NEW
-          });                                                     // NEW
+          pie.value(function(d) {
+            if (d.label === label) d.enabled = enabled;
+            return (d.enabled) ? d.count : 0;
+          });
 
-          path = path.data(pie(dataset));                         // NEW
+          path = path.data(pie(dataset));
 
-          path.transition()                                       // NEW
-            .duration(750)                                        // NEW
-            .attrTween('d', function(d) {                         // NEW
-              var interpolate = d3.interpolate(this._current, d); // NEW
-              this._current = interpolate(0);                     // NEW
-              return function(t) {                                // NEW
-                return arc(interpolate(t));                       // NEW
-              };                                                  // NEW
-            });                                                   // NEW
-        });                                                       // NEW
+          path.transition()
+            .duration(750)
+            .attrTween('d', function(d) {
+              var interpolate = d3.interpolate(this._current, d);
+              this._current = interpolate(0);
+              return function(t) {
+                return arc(interpolate(t));
+              };
+            });
+        });
 
       legend.append('text')
         .attr('x', legendRectSize + legendSpacing)
