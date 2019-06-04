@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
+<meta charset="utf-8"></meta>
 <html>
   <head>
-    <meta charset="utf-8">
     <title>Visualizacion - Pie Chart</title>
-    <link rel="stylesheet" href="normalize.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css"></link>
     <style>
       #chart {
         height: 360px;
@@ -43,7 +42,6 @@
     </style>
   </head>
   <body>
-    <h1>Top 5 crimenes contra la mujer, 2017</h1>             <!-- NEW -->
     <div id="chart"></div>
     <script src="js/d3.v4.min.js"></script>
     <script>
@@ -80,10 +78,10 @@
 
         var tooltip = d3.select('#chart')
           .append('div')
-          .attr('class', 'tooltip');
+          .attr('data-original-class', 'tooltip');
 
         tooltip.append('div')
-          .attr('class', 'label');
+          .attr('class', 'label2');
 
         tooltip.append('div')
           .attr('class', 'count');
@@ -112,7 +110,7 @@
               return (d.enabled) ? d.count : 0;                       // UPDATED
             }));
             var percent = Math.round(1000 * d.data.count / total) / 10;
-            tooltip.select('.label').html(d.data.label);
+            tooltip.select('.label2').html(d.data.label);
             tooltip.select('.count').html(d.data.count);
             tooltip.select('.percent').html(percent + '%');
             tooltip.style('display', 'block');
