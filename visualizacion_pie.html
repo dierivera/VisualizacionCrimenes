@@ -43,7 +43,7 @@
   </head>
   <body>
     <div id="chart"></div>
-    <script src="js/d3.v4.min.js"></script>
+    <script src="js/d3.v3.min.js"></script>
     <script>
       (function(d3) {
         'use strict';
@@ -57,7 +57,7 @@
 
         //var color = d3.scaleOrdinal(d3.schemeCategory20b);
 
-        var color = d3.scaleOrdinal().range(["#3f1616", "#632525", "#863939", "#9b3d3d", "#c46767"]);
+        var color = d3.scale.ordinal().range(["#3f1616", "#632525", "#863939", "#9b3d3d", "#c46767"]);
 
 
         var svg = d3.select('#chart')
@@ -68,11 +68,11 @@
           .attr('transform', 'translate(' + (width / 2) +
             ',' + (height / 2) + ')');
 
-        var arc = d3.arc()
+        var arc = d3.svg.arc()
           .innerRadius(radius - donutWidth)
           .outerRadius(radius);
 
-        var pie = d3.pie()
+        var pie = d3.layout.pie()
           .value(function(d) { return d.count; })
           .sort(null);
 
