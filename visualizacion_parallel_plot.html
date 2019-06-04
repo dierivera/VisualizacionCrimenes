@@ -12,9 +12,30 @@
 <script src="js/d3.v3.min.js"></script>
 <script src="js/d3.parcoords.js"></script>
 <script src="js/divgrid.js"></script>
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+<nav class="navbar navbar-light" style="background-color: #3f1616;">
+  <h2 style="color:#eae7e4; text-align: center;">Crimenes contra las mujeres</h2>
+</nav>
+
+<h4 style="margin-left: 20px;" >Top 5 Crimenes contra las mujeres, 2017</h4>
+<div style="width: 420px; height: 580px" id="pie_chart" > </div>
 
 <div id="example" class="parcoords"></div>
 <div id="grid"></div>
+
+
+<script>
+  $( "#pie_chart" ).load( "visualizacion_pie.html" );
+</script>
+
 
 <script id="brushing">// quantitative colour scale
 
