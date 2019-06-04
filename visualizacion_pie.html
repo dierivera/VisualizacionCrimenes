@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<meta charset="utf-8"></meta>
+<meta charset="utf-8">
 <html>
   <head>
     <title>Visualizacion - Pie Chart</title>
@@ -42,12 +42,34 @@
     </style>
   </head>
   <body>
+    <div  style="margin-left: 20px; float: left;">
+      <h3 align="center">Top 5 crimenes contra las mujeres</h3>
+      <div class="form-group">
+          <select class="form-control">
+             <option value="data/generated_crimenes_2017.csv">2017</option>
+             <option value="data/generated_crimenes_2016.csv">2016</option>
+             <option value="data/generated_crimenes_2015.csv">2015</option>
+             <option value="data/generated_crimenes_2014.csv">2014</option>
+             <option value="data/generated_crimenes_2013.csv">2013</option>
+             <option value="data/generated_crimenes_2012.csv">2012</option>
+             <option value="data/generated_crimenes_2011.csv">2011</option>
+             <option value="data/generated_crimenes_2010.csv">2010</option>
+          </select>
+       </div>
     <div id="chart"></div>
     <script src="js/d3.v3.min.js"></script>
-    <script>
-      (function(d3) {
-        'use strict';
 
+    <!-- Heres the code to update the pie chart -->
+    <script>
+    $('select').on('change', function() {
+      //alert( this.value );
+      updateDataset(this.value);
+    });
+    </script>
+
+    <script>
+    function updateDataset(path){
+        document.getElementById("chart").innerHTML = "";
         var width = 420;
         var height = 420;
         var radius = Math.min(width, height) / 2;
@@ -65,8 +87,7 @@
           .attr('width', width)
           .attr('height', height)
           .append('g')
-          .attr('transform', 'translate(' + (width / 2) +
-            ',' + (height / 2) + ')');
+          .attr('transform', 'translate(' + (width / 2) +  ',' + (height / 2) + ')');
 
         var arc = d3.svg.arc()
           .innerRadius(radius - donutWidth)
@@ -89,7 +110,7 @@
         tooltip.append('div')
           .attr('class', 'percent');
 
-        d3.csv('data/generated_crimenes_2017.csv', function(error, dataset) {
+        d3.csv(path, function (error, dataset) {
           dataset.forEach(function(d) {
             d.count = +d.count;
             d.enabled = true;                                         // NEW
@@ -185,7 +206,149 @@
 
         });
 
-      })(window.d3);
+
+    };
+    //end of update function
+
+    //Initial code to graph the pie chart
+    'use strict';
+
+    var width = 420;
+    var height = 420;
+    var radius = Math.min(width, height) / 2;
+    var donutWidth = 65;
+    var legendRectSize = 18;
+    var legendSpacing = 4;
+
+    //var color = d3.scaleOrdinal(d3.schemeCategory20b);
+
+    var color = d3.scale.ordinal().range(["#3f1616", "#632525", "#863939", "#9b3d3d", "#c46767"]);
+
+
+    var svg = d3.select('#chart')
+      .append('svg')
+      .attr('width', width)
+      .attr('height', height)
+      .append('g')
+      .attr('transform', 'translate(' + (width / 2) +
+        ',' + (height / 2) + ')');
+
+    var arc = d3.svg.arc()
+      .innerRadius(radius - donutWidth)
+      .outerRadius(radius);
+
+    var pie = d3.layout.pie()
+      .value(function(d) { return d.count; })
+      .sort(null);
+
+    var tooltip = d3.select('#chart')
+      .append('div')
+      .attr('data-original-class', 'tooltip');
+
+    tooltip.append('div')
+      .attr('class', 'label2');
+
+    tooltip.append('div')
+      .attr('class', 'count');
+
+    tooltip.append('div')
+      .attr('class', 'percent');
+
+    d3.csv('data/generated_crimenes_2017.csv', function (error, dataset) {
+      dataset.forEach(function(d) {
+        d.count = +d.count;
+        d.enabled = true;                                         // NEW
+      });
+
+      var path = svg.selectAll('path')
+        .data(pie(dataset))
+        .enter()
+        .append('path')
+        .attr('d', arc)
+        .attr('fill', function(d, i) {
+          return color(d.data.label);
+        })                                                        // UPDATED (removed semicolon)
+        .each(function(d) { this._current = d; });                // NEW
+
+      path.on('mouseover', function(d) {
+        var total = d3.sum(dataset.map(function(d) {
+          return (d.enabled) ? d.count : 0;                       // UPDATED
+        }));
+        var percent = Math.round(1000 * d.data.count / total) / 10;
+        tooltip.select('.label2').html(d.data.label);
+        tooltip.select('.count').html(d.data.count);
+        tooltip.select('.percent').html(percent + '%');
+        tooltip.style('display', 'block');
+      });
+
+      path.on('mouseout', function() {
+        tooltip.style('display', 'none');
+      });
+
+      /* OPTIONAL
+      path.on('mousemove', function(d) {
+        tooltip.style('top', (d3.event.layerY + 10) + 'px')
+          .style('left', (d3.event.layerX + 10) + 'px');
+      });
+      */
+
+      var legend = svg.selectAll('.legend')
+        .data(color.domain())
+        .enter()
+        .append('g')
+        .attr('class', 'legend')
+        .attr('transform', function(d, i) {
+          var height = legendRectSize + legendSpacing;
+          var offset =  height * color.domain().length / 2;
+          var horz = -100;
+          var vert = i * height - offset;
+          return 'translate(' + horz + ',' + vert + ')';
+        });
+
+      legend.append('rect')
+        .attr('width', legendRectSize)
+        .attr('height', legendRectSize)
+        .style('fill', color)
+        .style('stroke', color)                                   // UPDATED (removed semicolon)
+        .on('click', function(label) {                            // NEW
+          var rect = d3.select(this);                             // NEW
+          var enabled = true;                                     // NEW
+          var totalEnabled = d3.sum(dataset.map(function(d) {     // NEW
+            return (d.enabled) ? 1 : 0;                           // NEW
+          }));                                                    // NEW
+
+          if (rect.attr('class') === 'disabled') {                // NEW
+            rect.attr('class', '');                               // NEW
+          } else {                                                // NEW
+            if (totalEnabled < 2) return;                         // NEW
+            rect.attr('class', 'disabled');                       // NEW
+            enabled = false;                                      // NEW
+          }                                                       // NEW
+
+          pie.value(function(d) {                                 // NEW
+            if (d.label === label) d.enabled = enabled;           // NEW
+            return (d.enabled) ? d.count : 0;                     // NEW
+          });                                                     // NEW
+
+          path = path.data(pie(dataset));                         // NEW
+
+          path.transition()                                       // NEW
+            .duration(750)                                        // NEW
+            .attrTween('d', function(d) {                         // NEW
+              var interpolate = d3.interpolate(this._current, d); // NEW
+              this._current = interpolate(0);                     // NEW
+              return function(t) {                                // NEW
+                return arc(interpolate(t));                       // NEW
+              };                                                  // NEW
+            });                                                   // NEW
+        });                                                       // NEW
+
+      legend.append('text')
+        .attr('x', legendRectSize + legendSpacing)
+        .attr('y', legendRectSize - legendSpacing)
+        .text(function(d) { return d; });
+
+    });(window.d3);
     </script>
   </body>
 </html>
